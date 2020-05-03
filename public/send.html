@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>向服务器发送数据</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+		<style>
+			.center{
+				width: 300px;
+				margin: 0 auto;
+			}
+			#username{
+				width: 240px;
+				height: 28px;
+				line-height: 28px;
+				outline: none;
+				font-size: 20px;
+				color: #ff6464;
+				border: solid 1px #ff6464;
+			}
+			button{
+				width: 240px;
+				height: 36px;
+				background-color: #ff6464;
+				border: none;
+				outline: none;
+				margin-top: 20px;
+				color: white;
+			}
+			</style>
+	</head>
+
+	<body>
+		<div class="center">
+			<h1>向服务器发送数据</h1>
+			<input type="text" id="username" value="" />
+			<button onclick="send()">发送数据</button>
+		</div>
+
+		<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+		<script type="text/javascript">
+			function send() {
+				$.ajax({
+					type: "GET",
+					url: "http://192.168.1.4:8081/setData",
+					dataType: "json",
+					data: {
+						username: $('#username').val()
+					},
+					success: function(data) {
+
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>
