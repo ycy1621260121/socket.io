@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>向服务器发送数据</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+		<style>
+			.center{
+				width: 300px;
+				margin: 0 auto;
+			}
+			input{
+				width: 240px;
+				height: 28px;
+				line-height: 28px;
+				outline: none;
+				font-size: 20px;
+				color: #ff6464;
+				border: solid 1px #ff6464;
+				margin-top: 20px;
+			}
+			button{
+				width: 240px;
+				height: 36px;
+				background-color: #ff6464;
+				border: none;
+				outline: none;
+				margin-top: 20px;
+				color: white;
+			}
+			
+			.spinner>div {
+				width: 30px;
+				height: 30px;
+				background-color: #F1F1F1;
+				border-radius: 100%;
+				display: inline-block;
+				-webkit-animation: bouncedelay 1.4s infinite ease-in-out;
+				animation: bouncedelay 1.4s infinite ease-in-out;
+				/* Prevent first frame from flickering when animation starts */
+				-webkit-animation-fill-mode: both;
+				animation-fill-mode: both;
+			}
+			
+			.spinner .bounce1 {
+				-webkit-animation-delay: -0.32s;
+				animation-delay: -0.32s;
+			}
+			
+			.spinner .bounce2 {
+				-webkit-animation-delay: -0.16s;
+				animation-delay: -0.16s;
+			}
+			
+			#mask {
+				width: 100%;
+				height: 100%;
+				position: fixed;
+				left: 0;
+				top: 0;
+				background-color: rgba(0, 0, 0, 0.8);
+				z-index: 999999;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+			}
+			#mask .masktext{
+				color: white;
+			}
+			@-webkit-keyframes bouncedelay {
+				0%,
+				80%,
+				100% {
+					-webkit-transform: scale(0.0)
+				}
+				40% {
+					-webkit-transform: scale(1.0)
+				}
+			}
+			
+			@keyframes bouncedelay {
+				0%,
+				80%,
+				100% {
+					transform: scale(0.0);
+					-webkit-transform: scale(0.0);
+				}
+				40% {
+					transform: scale(1.0);
+					-webkit-transform: scale(1.0);
+				}
+			}
+			#count{
+				width: 240px;
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+			}
+			#count button,#count input{
+				width: 60px;
+			}
+			</style>
+	</head>
+
+	<body>
+		<div class="center">
+			<h1>向服务器发送数据</h1>
+			<input type="text" id="name1" value="" placeholder="请输入" onkeypress="send()"/>
+			<input type="text" id="name2" value="" placeholder="请输入" onkeypress="send()"/>
+
+			<div id="count">
+				<button onclick="numBtn('minus')">-</button>
+				<input type="text" id="number" value="1" placeholder="请输入" onkeypress="send()"/>
+				<button onclick="numBtn('add')">+</button>
+			</div>
+			<button onclick="send()">发送数据</button>
+		</div>
+		<div id="mask" style="display: none;">
+			<div class="spinner">
+				<div class="bounce1"></div>
+				<div class="bounce2"></div>
+				<div class="bounce3"></div>
+			</div>
+			<br />
+			<div class="masktext">服务器走丢了，正在连接...</div>
+		</div>
+		<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+		<script src="https://cdn.bootcdn.net/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+		<script type="text/javascript">
+			var socket = io.connect('ws://192.168.199.73:8081');
+			socket.on('connect', () => {
+				console.log('connect success');
+				$('#mask').fadeOut();
+			})
+			let count = 1;
+
+			function numBtn(btn) {
+				if (btn == 'minus') {
+					if (count > 1) {
+						count--
+					}
+				} else {
+					if (count < 10000) {
+						count++
+					}
+				}
+				$('#number').val(count);
+				send();
+			}
+
+			function send() {
+				let data = {
+					name1: $('#name1').val(),
+					name2: $('#name2').val(),
+					number:$('#number').val()
+				}
+				socket.emit('message', data)
+			}
+			socket.on('disconnect', () => {
+				$('#mask').fadeIn();
+				//断开重新连接
+				setInterval(() => {
+					socket.connect();
+				}, 300)
+			});
+		</script>
+	</body>
+
+</html>
