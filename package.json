@@ -14,7 +14,7 @@
     "request": "^2.88.0",
     "vconsole": "^3.3.4",
     "vue": "^2.6.10",
-    "vue-socket.io": "^2.1.1-a"
+    "vue-socket.io": "^3.0.10"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.8.0",
